@@ -21,26 +21,13 @@ impl WindowsNetworkManager {
         }
     }
 
-    fn enum_interfaces(client_handle: HANDLE) -> Option<*mut WLAN_INTERFACE_INFO_LIST> {
-        let mut iface_list_ptr: *mut WLAN_INTERFACE_INFO_LIST = std::ptr::null_mut();
-        let result = unsafe { WlanEnumInterfaces(client_handle, None, &mut iface_list_ptr) };
-
-        if result == ERROR_SUCCESS.0 && !iface_list_ptr.is_null() {
-            Some(iface_list_ptr)
-        } else {
-            println!("Failed to enumerate WLAN interfaces: {}", result);
-            None
-        }
-    }
-
-    fn first_interface_guid(iface_list_ptr: *mut WLAN_INTERFACE_INFO_LIST) -> Option<GUID> {
-        let iface_list = unsafe { &*iface_list_ptr };
-        if iface_list.dwNumberOfItems == 0 {
-            println!("No WLAN interfaces found");
-            None
-        } else {
-            Some(iface_list.InterfaceInfo[0].InterfaceGuid)
-        }
+    fn get_network_interface(handle: HANDLE) -> Option<GUID> {
+        Self::enum_interfaces(handle).and_then(|iface_list_ptr: *mut WLAN_INTERFACE_INFO_LIST| {
+            let guid = Self::first_interface_guid(iface_list_ptr);
+            // Clean up the interface list after extracting the GUID
+            unsafe { WlanFreeMemory(iface_list_ptr as _) };
+            guid
+        })
     }
 
     fn disconnect(client_handle: HANDLE, iface: &GUID) -> Option<()> {
@@ -65,19 +52,36 @@ impl WindowsNetworkManager {
         //     None
         // }
     }
+
+    fn enum_interfaces(client_handle: HANDLE) -> Option<*mut WLAN_INTERFACE_INFO_LIST> {
+        let mut iface_list_ptr: *mut WLAN_INTERFACE_INFO_LIST = std::ptr::null_mut();
+        let result = unsafe { WlanEnumInterfaces(client_handle, None, &mut iface_list_ptr) };
+
+        if result == ERROR_SUCCESS.0 && !iface_list_ptr.is_null() {
+            Some(iface_list_ptr)
+        } else {
+            println!("Failed to enumerate WLAN interfaces: {}", result);
+            None
+        }
+    }
+
+    fn first_interface_guid(iface_list_ptr: *mut WLAN_INTERFACE_INFO_LIST) -> Option<GUID> {
+        let iface_list = unsafe { &*iface_list_ptr };
+        if iface_list.dwNumberOfItems == 0 {
+            println!("No WLAN interfaces found");
+            None
+        } else {
+            Some(iface_list.InterfaceInfo[0].InterfaceGuid)
+        }
+    }
 }
 
 impl NetworkManager for WindowsNetworkManager {
     fn reconnect(&self) -> bool {
         Self::open_handle()
-            .and_then(Self::enum_interfaces)
-            .and_then(Self::first_interface_guid)
-            .and_then(|guid| {
-                Self::open_handle()
-                    .and_then(|h| Self::disconnect(h, &guid))
-                    .map(|_| guid)
-            })
-            .and_then(|guid| Self::open_handle().and_then(|h| Self::connect(h, &guid)))
+            .and_then(|handle| Self::get_network_interface(handle).map(|guid| (handle, guid)))
+            .and_then(|(handle, guid)| Self::disconnect(handle, &guid).map(|_| (handle, guid)))
+            .and_then(|(handle, guid)| Self::connect(handle, &guid))
             .is_some()
     }
 }

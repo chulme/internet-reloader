@@ -129,10 +129,10 @@ impl NetworkManager for WindowsNetworkManager {
                 let profile_name = Self::get_current_profile_name(handle, &guid)?;
                 Some((handle, guid, profile_name))
             })
-            .and_then(|(handle, guid, profile)| {
+            .map(|(handle, guid, profile)| {
                 // Disconnect first
                 let _ = Self::disconnect(handle, &guid);
-                Some((handle, guid, profile))
+                (handle, guid, profile)
             })
             .and_then(|(handle, guid, profile)| {
                 // Connect using the saved profile

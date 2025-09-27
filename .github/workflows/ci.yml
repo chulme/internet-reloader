@@ -27,3 +27,22 @@ jobs:
         run: cargo test --verbose
       - name: Lint with clippy
         run: cargo clippy -- -D warnings
+
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+          override: true
+      - name: Install cargo-tarpaulin
+        run: cargo install cargo-tarpaulin
+      - name: Run coverage
+        run: cargo tarpaulin --out Xml --workspace
+      - name: Upload to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./tarpaulin-report.xml
+          fail_ci_if_error: true

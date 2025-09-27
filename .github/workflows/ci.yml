@@ -56,6 +56,10 @@ jobs:
       - name: Build documentation
         run: cargo doc --no-deps --workspace
 
+      - name: Add redirect index.html
+        run: |
+          echo '<!DOCTYPE html><meta http-equiv="refresh" content="0; url=./internet_reloader/"><script>window.location.href="./internet_reloader/"</script>' > target/doc/index.html
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:

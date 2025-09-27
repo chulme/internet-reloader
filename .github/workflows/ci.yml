@@ -40,23 +40,23 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
         
-    docs:
-      runs-on: ubuntu-latest
+  docs:
+    runs-on: ubuntu-latest
 
-      steps:
-        - uses: actions/checkout@v4
+    steps:
+      - uses: actions/checkout@v4
 
-        - name: Install Rust
-          uses: actions-rs/toolchain@v1
-          with:
-            toolchain: stable
-            override: true
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
 
-        - name: Build documentation
-          run: cargo doc --no-deps --workspace
+      - name: Build documentation
+        run: cargo doc --no-deps --workspace
 
-        - name: Deploy to GitHub Pages
-          uses: peaceiris/actions-gh-pages@v7
-          with:
-            github_token: ${{ secrets.GITHUB_TOKEN }}
-            publish_dir: ./target/doc
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v7
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./target/doc

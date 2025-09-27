@@ -7,6 +7,17 @@ pub enum NetworkStatus {
     NetworkOnly,
     Disconnected,
 }
+
+impl std::fmt::Display for NetworkStatus {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match self {
+            NetworkStatus::Connected => write!(f, "Connected"),
+            NetworkStatus::NetworkOnly => write!(f, "NetworkOnly"),
+            NetworkStatus::Disconnected => write!(f, "Disconnected"),
+        }
+    }
+}
+
 pub struct NetworkApp<C: InternetConnectivity, M: NetworkManager> {
     checker: C,
     manager: M,

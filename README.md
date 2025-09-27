@@ -1,1 +1,1 @@
-![Rust](https://github.com/<username>/<repo>/actions/workflows/ci.yml/badge.svg)
+![Rust](https://github.com/chulme/internet-reloader/actions/workflows/ci.yml/badge.svg)

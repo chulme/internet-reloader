@@ -4,6 +4,6 @@ pub struct WindowsNetworkManager;
 
 impl NetworkManager for WindowsNetworkManager {
     fn reconnect(&self) -> bool {
-        return true;
+        true
     }
 }

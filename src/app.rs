@@ -14,7 +14,7 @@ pub struct NetworkApp<C: InternetConnectivity, M: NetworkManager> {
 
 impl<C: InternetConnectivity, M: NetworkManager> NetworkApp<C, M> {
     pub fn new(checker: C, manager: M) -> Self {
-        return Self { checker, manager };
+        Self { checker, manager }
     }
 
     pub fn poll(&self) -> NetworkStatus {
@@ -22,8 +22,8 @@ impl<C: InternetConnectivity, M: NetworkManager> NetworkApp<C, M> {
             self.checker.is_connected_to_network(),
             self.checker.is_connected_to_internet(),
         ) {
-            (true, true) => return NetworkStatus::Connected,
-            (false, _) => return NetworkStatus::Disconnected,
+            (true, true) => NetworkStatus::Connected,
+            (false, _) => NetworkStatus::Disconnected,
             (true, false) => {
                 println!("Network connected, but no internet, attempting reconnect...");
                 let success = self.manager.reconnect();
@@ -31,11 +31,11 @@ impl<C: InternetConnectivity, M: NetworkManager> NetworkApp<C, M> {
                 match success {
                     true => {
                         println!("Reconnected successfully");
-                        return NetworkStatus::Connected;
+                        NetworkStatus::Connected
                     }
                     false => {
                         println!("Reconnect failed");
-                        return NetworkStatus::NetworkOnly;
+                        NetworkStatus::NetworkOnly
                     }
                 }
             }

@@ -1,16 +1,14 @@
 use crate::network_manager::NetworkManager;
 use windows::Win32::Foundation::{ERROR_SUCCESS, HANDLE};
 use windows::Win32::NetworkManagement::WiFi::*;
-use windows::core::GUID;
+use windows::core::{GUID, PCWSTR};
 
-/// Implementation of [`NetworkManager`] for Windows OS.
 pub struct WindowsNetworkManager;
 
 impl WindowsNetworkManager {
     fn open_handle() -> Option<HANDLE> {
         let mut client_handle = HANDLE(std::ptr::null_mut());
         let mut negotiated_version = 0u32;
-
         let result =
             unsafe { WlanOpenHandle(2, None, &mut negotiated_version, &mut client_handle) };
         if result == ERROR_SUCCESS.0 {
@@ -30,6 +28,35 @@ impl WindowsNetworkManager {
         })
     }
 
+    fn get_current_profile_name(handle: HANDLE, iface: &GUID) -> Option<String> {
+        let mut data_ptr: *mut std::ffi::c_void = std::ptr::null_mut();
+        let mut data_size: u32 = 0;
+        let mut opcode: WLAN_OPCODE_VALUE_TYPE = WLAN_OPCODE_VALUE_TYPE(0);
+
+        let result = unsafe {
+            WlanQueryInterface(
+                handle,
+                iface,
+                wlan_intf_opcode_current_connection,
+                None,
+                &mut data_size,
+                &mut data_ptr,
+                Some(&mut opcode),
+            )
+        };
+
+        if result != ERROR_SUCCESS.0 || data_ptr.is_null() {
+            return None;
+        }
+
+        let conn_info = unsafe { &*(data_ptr as *const WLAN_CONNECTION_ATTRIBUTES) };
+        let profile_name = String::from_utf16_lossy(&conn_info.strProfileName)
+            .trim_end_matches('\0')
+            .to_string();
+
+        unsafe { WlanFreeMemory(data_ptr as *mut _) };
+        Some(profile_name)
+    }
     fn disconnect(client_handle: HANDLE, iface: &GUID) -> Option<()> {
         let result = unsafe { WlanDisconnect(client_handle, iface, None) };
         if result == ERROR_SUCCESS.0 {
@@ -40,17 +67,34 @@ impl WindowsNetworkManager {
             None
         }
     }
+    fn connect(handle: HANDLE, iface: &GUID, profile: &str) -> Option<()> {
+        // Convert profile string to PCWSTR
+        let utf16: Vec<u16> = profile.encode_utf16().chain(Some(0)).collect();
+        let profile_pcwstr = PCWSTR(utf16.as_ptr());
 
-    fn connect(client_handle: HANDLE, iface: &GUID) -> Option<()> {
-        todo!("Can't find defintion of WlanConnect for now.")
-        // let result = WlanConnect(client_handle, iface, std::ptr::null());
-        // if result == ERROR_SUCCESS.0 {
-        //     println!("Reconnected successfully ✅");
-        //     Some(())
-        // } else {
-        //     println!("Reconnect failed ❌ (error code {result})");
-        //     None
-        // }
+        let result = unsafe {
+            WlanConnect(
+                handle,
+                iface,
+                &WLAN_CONNECTION_PARAMETERS {
+                    wlanConnectionMode: wlan_connection_mode_profile,
+                    strProfile: profile_pcwstr,
+                    pDot11Ssid: std::ptr::null_mut(),
+                    pDesiredBssidList: std::ptr::null_mut(),
+                    dot11BssType: dot11_BSS_type_any,
+                    dwFlags: 0,
+                },
+                None,
+            )
+        };
+
+        if result == ERROR_SUCCESS.0 {
+            println!("Reconnect initiated");
+            Some(())
+        } else {
+            println!("Reconnect failed (error code {result})");
+            None
+        }
     }
 
     fn enum_interfaces(client_handle: HANDLE) -> Option<*mut WLAN_INTERFACE_INFO_LIST> {
@@ -80,8 +124,22 @@ impl NetworkManager for WindowsNetworkManager {
     fn reconnect(&self) -> bool {
         Self::open_handle()
             .and_then(|handle| Self::get_network_interface(handle).map(|guid| (handle, guid)))
-            .and_then(|(handle, guid)| Self::disconnect(handle, &guid).map(|_| (handle, guid)))
-            .and_then(|(handle, guid)| Self::connect(handle, &guid))
+            .and_then(|(handle, guid)| {
+                // Get profile name for this interface
+                let profile_name = Self::get_current_profile_name(handle, &guid)?;
+                Some((handle, guid, profile_name))
+            })
+            .and_then(|(handle, guid, profile)| {
+                // Disconnect first
+                let _ = Self::disconnect(handle, &guid);
+                Some((handle, guid, profile))
+            })
+            .and_then(|(handle, guid, profile)| {
+                // Connect using the saved profile
+                let success = Self::connect(handle, &guid, &profile);
+                unsafe { WlanCloseHandle(handle, None) };
+                success
+            })
             .is_some()
     }
 }

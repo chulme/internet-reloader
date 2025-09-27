@@ -1,14 +1,13 @@
 use crate::internet_connectivity::InternetConnectivity;
 use windows::Win32::Networking::WinInet::{INTERNET_CONNECTION, InternetGetConnectedState};
 
+/// Implementation of [`InternetConnectivity`] for Windows OS.
 pub struct WindowsInternetConnectivity;
 
 impl InternetConnectivity for WindowsInternetConnectivity {
     fn is_connected_to_network(&self) -> bool {
         let mut flags = INTERNET_CONNECTION(0);
-        unsafe {
-            InternetGetConnectedState(&mut flags, Some(0)).is_ok()
-        }
+        unsafe { InternetGetConnectedState(&mut flags, Some(0)).is_ok() }
     }
 
     fn is_connected_to_internet(&self) -> bool {

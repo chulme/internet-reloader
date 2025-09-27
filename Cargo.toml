@@ -2,6 +2,9 @@
 name = "internet_reloader"
 version = "0.1.0"
 edition = "2024"
+readme = "README.md"
+authors = ["Chris Hulme"]
+description = "A Rust application to monitor internet connectivity and manage network connections on Windows."
 
 [dependencies]
 cfg-if = "1.0.3"

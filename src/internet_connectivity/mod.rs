@@ -1,3 +1,5 @@
+//! Module for checking internet connectivity.
+
 mod interface;
 mod windows;
 

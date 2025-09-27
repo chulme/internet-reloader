@@ -1,3 +1,5 @@
+//! Module for managing network connections.
+
 mod interface;
 mod windows;
 

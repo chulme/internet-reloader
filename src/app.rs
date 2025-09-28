@@ -84,11 +84,13 @@ cfg_if::cfg_if! {
     if #[cfg(target_os = "windows")] {
         use crate::internet_connectivity::WindowsInternetConnectivity;
         use crate::network_manager::WindowsNetworkManager;
+        use crate::network_manager::WlanApiImpl;
 
         /// Default implementation of [`NetworkApp`] for Windows OS.
-        impl Default for NetworkApp<WindowsInternetConnectivity, WindowsNetworkManager> {
+        impl Default for NetworkApp<WindowsInternetConnectivity, WindowsNetworkManager<WlanApiImpl>> {
             fn default() -> Self {
-                Self::new(WindowsInternetConnectivity {}, WindowsNetworkManager {})
+                Self::new(WindowsInternetConnectivity {}, WindowsNetworkManager::<WlanApiImpl>::new()
+ )
             }
         }
     } else {

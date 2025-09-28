@@ -10,3 +10,4 @@ description = "A Rust application to monitor internet connectivity and manage ne
 cfg-if = "1.0.3"
 windows = { version = "0.62.1", features = ["Win32_Networking_WinInet", "Win32_NetworkManagement_WiFi", "Win32_NetworkManagement_Ndis"] }
 mockall = "0.13.1"
+windows-core = "0.62.1"

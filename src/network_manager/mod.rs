@@ -5,3 +5,5 @@ mod windows;
 
 pub use interface::NetworkManager;
 pub use windows::WindowsNetworkManager;
+pub use windows::WlanApi;
+pub use windows::WlanApiImpl;

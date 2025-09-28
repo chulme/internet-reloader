@@ -78,8 +78,7 @@ pub trait WlanApi {
 
 /// Concrete implementation of the [`WlanApi`] trait using actual Windows API calls.
 pub struct WlanApiImpl;
-
-#[no_coverage]
+#[coverage(off)]
 impl WlanApi for WlanApiImpl {
     // All methods implement the real Windows API logic, as in your current code
     unsafe fn open_handle(

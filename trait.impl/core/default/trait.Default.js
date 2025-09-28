@@ -1,0 +1,9 @@
+(function() {
+    var implementors = Object.fromEntries([["internet_reloader",[["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.90.0/core/default/trait.Default.html\" title=\"trait core::default::Default\">Default</a> for <a class=\"struct\" href=\"internet_reloader/app/struct.NetworkApp.html\" title=\"struct internet_reloader::app::NetworkApp\">NetworkApp</a>&lt;<a class=\"struct\" href=\"internet_reloader/internet_connectivity/struct.WindowsInternetConnectivity.html\" title=\"struct internet_reloader::internet_connectivity::WindowsInternetConnectivity\">WindowsInternetConnectivity</a>, <a class=\"struct\" href=\"internet_reloader/network_manager/struct.WindowsNetworkManager.html\" title=\"struct internet_reloader::network_manager::WindowsNetworkManager\">WindowsNetworkManager</a>&lt;<a class=\"struct\" href=\"internet_reloader/network_manager/struct.WlanApiImpl.html\" title=\"struct internet_reloader::network_manager::WlanApiImpl\">WlanApiImpl</a>&gt;&gt;"],["impl&lt;A: <a class=\"trait\" href=\"internet_reloader/network_manager/trait.WlanApi.html\" title=\"trait internet_reloader::network_manager::WlanApi\">WlanApi</a>&gt; <a class=\"trait\" href=\"https://doc.rust-lang.org/1.90.0/core/default/trait.Default.html\" title=\"trait core::default::Default\">Default</a> for <a class=\"struct\" href=\"internet_reloader/network_manager/struct.WindowsNetworkManager.html\" title=\"struct internet_reloader::network_manager::WindowsNetworkManager\">WindowsNetworkManager</a>&lt;A&gt;"]]]]);
+    if (window.register_implementors) {
+        window.register_implementors(implementors);
+    } else {
+        window.pending_implementors = implementors;
+    }
+})()
+//{"start":57,"fragment_lengths":[1457]}

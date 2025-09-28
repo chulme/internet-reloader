@@ -1,0 +1,9 @@
+(function() {
+    var implementors = Object.fromEntries([["internet_reloader",[["impl UnsafeUnpin for <a class=\"enum\" href=\"internet_reloader/app/enum.NetworkStatus.html\" title=\"enum internet_reloader::app::NetworkStatus\">NetworkStatus</a>",1,["internet_reloader::app::NetworkStatus"]],["impl UnsafeUnpin for <a class=\"struct\" href=\"internet_reloader/internet_connectivity/struct.WindowsInternetConnectivity.html\" title=\"struct internet_reloader::internet_connectivity::WindowsInternetConnectivity\">WindowsInternetConnectivity</a>",1,["internet_reloader::internet_connectivity::windows::WindowsInternetConnectivity"]],["impl UnsafeUnpin for <a class=\"struct\" href=\"internet_reloader/network_manager/struct.WlanApiImpl.html\" title=\"struct internet_reloader::network_manager::WlanApiImpl\">WlanApiImpl</a>",1,["internet_reloader::network_manager::windows::WlanApiImpl"]],["impl&lt;Api&gt; UnsafeUnpin for <a class=\"struct\" href=\"internet_reloader/network_manager/struct.WindowsNetworkManager.html\" title=\"struct internet_reloader::network_manager::WindowsNetworkManager\">WindowsNetworkManager</a>&lt;Api&gt;",1,["internet_reloader::network_manager::windows::WindowsNetworkManager"]],["impl&lt;C, M&gt; UnsafeUnpin for <a class=\"struct\" href=\"internet_reloader/app/struct.NetworkApp.html\" title=\"struct internet_reloader::app::NetworkApp\">NetworkApp</a>&lt;C, M&gt;<div class=\"where\">where\n    C: UnsafeUnpin,\n    M: UnsafeUnpin,</div>",1,["internet_reloader::app::NetworkApp"]]]]]);
+    if (window.register_implementors) {
+        window.register_implementors(implementors);
+    } else {
+        window.pending_implementors = implementors;
+    }
+})()
+//{"start":57,"fragment_lengths":[1453]}

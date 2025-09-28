@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":["app","internet_connectivity","network_manager"]};

@@ -7,7 +7,7 @@ authors = ["Chris Hulme"]
 description = "A Rust application to monitor internet connectivity and manage network connections on Windows."
 
 [dependencies]
-cfg-if = "1.0.3"
+cfg-if = "1.0.4"
 windows = { version = "0.62.1", features = ["Win32_Networking_WinInet", "Win32_NetworkManagement_WiFi", "Win32_NetworkManagement_Ndis"] }
 mockall = "0.13.1"
 windows-core = "0.62.1"
